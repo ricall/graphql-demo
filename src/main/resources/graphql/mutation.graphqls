@@ -1,0 +1,25 @@
+# Post Author
+input SubmitAuthor {
+    name: String!
+    thumbnail: String
+}
+
+input SubmitTag {
+    slug: String!
+    name: String!
+}
+
+# The Root Mutation for the application
+type Mutation {
+    # Add a post
+    addPost(
+        slug: String!
+        thumbnail: String!
+        image: String!
+        content: String!
+        category: String!
+        tags: [SubmitTag]!
+        author: SubmitAuthor!
+    ): Post!
+}
+

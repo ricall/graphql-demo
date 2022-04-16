@@ -1,0 +1,33 @@
+scalar DateTime
+
+# A single post
+type Post {
+    id: ID!
+    slug: String!
+    thumbnail: String!
+    image: String!
+    content: String!
+    category: String!
+    tags: [Tag]!
+    author: Author!
+
+    version: Int,
+    createdBy: String,
+    createdDateTime: DateTime
+    modifiedBy: String,
+    modifiedDateTime: DateTime
+}
+
+type Tag {
+    slug: String!
+    name: String!
+}
+
+type Author {
+    name: String!
+    thumbnail: String!
+}
+
+
+
+

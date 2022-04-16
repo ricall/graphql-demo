@@ -1,0 +1,16 @@
+spring:
+  sql:
+    init:
+      mode: always
+  graphql:
+    schema:
+      printer:
+        enabled: true
+    graphiql:
+      enabled: true
+  data:
+    mongodb:
+      database: posts
+
+app:
+  mongodb: true

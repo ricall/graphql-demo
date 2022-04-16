@@ -1,0 +1,11 @@
+# The Root Query for the application
+type Query {
+    # get recent posts
+    recentPosts(count: Int, offset: Int): [Post]!
+
+    # get posts by category
+    postsByCategory(category: String, count: Int, offset: Int): [Post]!
+
+    # get posts by category and tag
+    postsByCategoryAndTag(category: String, tag: String, count: Int, offset: Int): [Post]!
+}
