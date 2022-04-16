@@ -4,6 +4,7 @@ plugins {
     id("org.springframework.boot") version "2.7.0-M3"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.6.10"
+    kotlin("kapt") version "1.6.10"
     kotlin("plugin.spring") version "1.6.10"
 }
 
@@ -23,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.springframework.boot:spring-boot-starter-graphql")
     implementation("com.graphql-java:graphql-java-extended-scalars:17.0")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
