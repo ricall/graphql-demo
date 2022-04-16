@@ -1,15 +1,16 @@
 package au.com.ricall.graphqldemo.controller
 
-import au.com.ricall.graphqldemo.model.Author
-import au.com.ricall.graphqldemo.model.Post
-import au.com.ricall.graphqldemo.model.Tag
-import au.com.ricall.graphqldemo.service.PostService
+import au.com.ricall.graphqldemo.entity.AuthorEntity
+import au.com.ricall.graphqldemo.entity.PostEntity
+import au.com.ricall.graphqldemo.entity.TagEntity
+import au.com.ricall.graphqldemo.repository.PostRepository
 import au.com.ricall.graphqldemo.test.SpringBootTestWithoutMongoDB
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.graphql.test.tester.GraphQlTester
+import org.springframework.graphql.test.tester.GraphQlTester.Path
 import reactor.core.publisher.Flux
 
 @SpringBootTestWithoutMongoDB
@@ -18,28 +19,43 @@ class PostControllerTest {
     lateinit var tester: GraphQlTester
 
     @MockBean
-    lateinit var service: PostService
+    lateinit var repository: PostRepository
+
+    fun Path.asString() = this.entity(String::class.java)
+
+    fun execute(graphql: String) = tester.document(graphql.trimMargin()).execute()
 
     @Test
     fun `verify we can get a post`() {
-        whenever(service.getRecentPosts(1, 0)).thenReturn(Flux.fromIterable(listOf(Post(
-            id = "id",
-            slug = "post-slug",
-            image = "image",
-            thumbnail = "thumbnail",
-            content = "content",
-            category = "category",
-            tags = listOf(Tag(
-                slug = "tag-slug",
-                name = "name",
-            )),
-            author = Author(
-                name = "author-name",
-                thumbnail = "thumbnail"
-            ),
-        ))))
+        whenever(repository.findAll()).thenReturn(
+            Flux.fromIterable(
+                listOf(
+                    PostEntity(
+                        id = "id",
+                        slug = "post-slug",
+                        image = "image",
+                        thumbnail = "thumbnail",
+                        content = "content",
+                        category = "category",
+                        tags = setOf(
+                            TagEntity(
+                                id = "id",
+                                slug = "tag-slug",
+                                name = "name",
+                            )
+                        ),
+                        author = AuthorEntity(
+                            id = "id",
+                            name = "author-name",
+                            thumbnail = "thumbnail"
+                        ),
+                    )
+                )
+            )
+        )
 
-        tester.document("""
+        execute(
+            """
             {
               recentPosts(count: 1, offset: 0) {
                 id
@@ -55,17 +71,16 @@ class PostControllerTest {
                   thumbnail
                 }
               }
-            }
-        """.trimIndent())
-            .execute()
-            .path("recentPosts[0].id").entity(String::class.java).isEqualTo("id")
-            .path("recentPosts[0].slug").entity(String::class.java).isEqualTo("post-slug")
-            .path("recentPosts[0].content").entity(String::class.java).isEqualTo("content")
-            .path("recentPosts[0].category").entity(String::class.java).isEqualTo("category")
-            .path("recentPosts[0].tags[0].slug").entity(String::class.java).isEqualTo("tag-slug")
-            .path("recentPosts[0].tags[0].name").entity(String::class.java).isEqualTo("name")
-            .path("recentPosts[0].author.name").entity(String::class.java).isEqualTo("author-name")
-            .path("recentPosts[0].author.thumbnail").entity(String::class.java).isEqualTo("thumbnail")
+            }"""
+        )
+            .path("recentPosts[0].id").asString().isEqualTo("id")
+            .path("recentPosts[0].slug").asString().isEqualTo("post-slug")
+            .path("recentPosts[0].content").asString().isEqualTo("content")
+            .path("recentPosts[0].category").asString().isEqualTo("category")
+            .path("recentPosts[0].tags[0].slug").asString().isEqualTo("tag-slug")
+            .path("recentPosts[0].tags[0].name").asString().isEqualTo("name")
+            .path("recentPosts[0].author.name").asString().isEqualTo("author-name")
+            .path("recentPosts[0].author.thumbnail").asString().isEqualTo("thumbnail")
     }
 
 }
