@@ -10,17 +10,18 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import java.lang.annotation.Inherited
 
-
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 @Inherited
 @SpringBootTest(classes = [SimpleApplication::class])
 @ActiveProfiles("test")
-@EnableAutoConfiguration(exclude = [
-    MongoAutoConfiguration::class,
-    MongoReactiveAutoConfiguration::class,
-    MongoDataAutoConfiguration::class,
-])
+@EnableAutoConfiguration(
+    exclude = [
+        MongoAutoConfiguration::class,
+        MongoReactiveAutoConfiguration::class,
+        MongoDataAutoConfiguration::class,
+    ]
+)
 @AutoConfigureGraphQlTester
-annotation class SpringBootTestWithoutMongoDB()
+annotation class SpringBootTestWithoutMongoDB

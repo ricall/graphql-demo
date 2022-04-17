@@ -14,8 +14,10 @@ import reactor.core.publisher.Mono
 class PostController(val service: PostService) {
 
     @QueryMapping
-    fun recentPosts(@Argument count: Long?, @Argument offset: Long?)
-        = service.getRecentPosts(count, offset)
+    fun recentPosts(
+        @Argument count: Long?,
+        @Argument offset: Long?
+    ) = service.getRecentPosts(count, offset)
 
     @QueryMapping
     fun postsByCategory(
@@ -33,6 +35,7 @@ class PostController(val service: PostService) {
     ) = service.getPostsByCategoryAndTag(category, tag, count, offset)
 
     @MutationMapping
+    @Suppress("LongParameterList")
     fun addPost(
         @Argument slug: String,
         @Argument thumbnail: String,
@@ -54,5 +57,4 @@ class PostController(val service: PostService) {
         )
         return service.save(post)
     }
-
 }

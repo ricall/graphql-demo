@@ -8,8 +8,7 @@ import reactor.core.publisher.Flux
 
 @Repository
 @ConditionalOnProperty(value = ["app.mongodb"], havingValue = "true")
-interface PostRepository: ReactiveCrudRepository<PostEntity, String> {
+interface PostRepository : ReactiveCrudRepository<PostEntity, String> {
 
     fun findAllByCategory(category: String): Flux<PostEntity>
-
 }

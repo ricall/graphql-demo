@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 @ConditionalOnProperty(value = ["app.mongodb"], havingValue = "true")
 class Application
 
+@Suppress("SpreadOperator")
 fun main(args: Array<String>) {
     runApplication<Application>(*args)
 }

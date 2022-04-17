@@ -9,5 +9,4 @@ class ClockConfig {
 
     @Bean
     fun clock(): Clock = Clock.systemUTC()
-
 }

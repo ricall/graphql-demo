@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.7.0-M3"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("org.jmailen.kotlinter") version "3.2.0"
+    id("io.gitlab.arturbosch.detekt") version "1.17.1"
     kotlin("jvm") version "1.6.10"
     kotlin("kapt") version "1.6.10"
     kotlin("plugin.spring") version "1.6.10"
@@ -11,6 +13,7 @@ plugins {
 group = "au.com.ricall"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
+val detektVersion = "1.17.1"
 
 configurations {
     compileOnly {
@@ -44,6 +47,18 @@ dependencies {
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.graphql:spring-graphql-test")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+}
+
+kotlinter {
+    ignoreFailures = false
+    indentSize = 4
+    reporters = arrayOf("checkstyle", "plain")
+    disabledRules = arrayOf("import-ordering")
+}
+
+detekt {
+    toolVersion = detektVersion
+    config = files("${rootDir}/config/detekt-config.yml")
 }
 
 tasks.withType<KotlinCompile> {

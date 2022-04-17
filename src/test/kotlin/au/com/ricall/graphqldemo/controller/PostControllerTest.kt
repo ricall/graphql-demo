@@ -5,12 +5,15 @@ import au.com.ricall.graphqldemo.entity.PostEntity
 import au.com.ricall.graphqldemo.entity.TagEntity
 import au.com.ricall.graphqldemo.repository.PostRepository
 import au.com.ricall.graphqldemo.test.SpringBootTestWithoutMongoDB
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.graphql.test.tester.GraphQlTester
-import org.springframework.graphql.test.tester.GraphQlTester.Path
+import org.springframework.graphql.test.tester.GraphQlTester.Traversable
 import reactor.core.publisher.Flux
 
 @SpringBootTestWithoutMongoDB
@@ -21,9 +24,12 @@ class PostControllerTest {
     @MockBean
     lateinit var repository: PostRepository
 
-    fun Path.asString() = this.entity(String::class.java)
+    fun Traversable.verifyPath(path: String) = path(path).entity(String::class.java)
 
-    fun execute(graphql: String) = tester.document(graphql.trimMargin()).execute()
+    fun execute(graphql: String) = tester.document(graphql).execute()
+
+    @AfterEach
+    fun cleanup() = verifyNoMoreInteractions(repository)
 
     @Test
     fun `verify we can get a post`() {
@@ -54,7 +60,7 @@ class PostControllerTest {
             )
         )
 
-        execute(
+        val response = execute(
             """
             {
               recentPosts(count: 1, offset: 0) {
@@ -73,14 +79,16 @@ class PostControllerTest {
               }
             }"""
         )
-            .path("recentPosts[0].id").asString().isEqualTo("id")
-            .path("recentPosts[0].slug").asString().isEqualTo("post-slug")
-            .path("recentPosts[0].content").asString().isEqualTo("content")
-            .path("recentPosts[0].category").asString().isEqualTo("category")
-            .path("recentPosts[0].tags[0].slug").asString().isEqualTo("tag-slug")
-            .path("recentPosts[0].tags[0].name").asString().isEqualTo("name")
-            .path("recentPosts[0].author.name").asString().isEqualTo("author-name")
-            .path("recentPosts[0].author.thumbnail").asString().isEqualTo("thumbnail")
-    }
 
+        verify(repository).findAll()
+        response
+            .verifyPath("recentPosts[0].id").isEqualTo("id")
+            .verifyPath("recentPosts[0].slug").isEqualTo("post-slug")
+            .verifyPath("recentPosts[0].content").isEqualTo("content")
+            .verifyPath("recentPosts[0].category").isEqualTo("category")
+            .verifyPath("recentPosts[0].tags[0].slug").isEqualTo("tag-slug")
+            .verifyPath("recentPosts[0].tags[0].name").isEqualTo("name")
+            .verifyPath("recentPosts[0].author.name").isEqualTo("author-name")
+            .verifyPath("recentPosts[0].author.thumbnail").isEqualTo("thumbnail")
+    }
 }

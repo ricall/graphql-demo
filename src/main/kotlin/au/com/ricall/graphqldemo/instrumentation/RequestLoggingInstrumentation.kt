@@ -12,10 +12,12 @@ import java.time.Duration
 import java.time.Instant
 
 @Component
-class RequestLoggingInstrumentation(val clock: Clock): SimpleInstrumentation() {
+class RequestLoggingInstrumentation(val clock: Clock) : SimpleInstrumentation() {
     private val log = LoggerFactory.getLogger(javaClass)
 
-    override fun beginExecution(parameters: InstrumentationExecutionParameters?): InstrumentationContext<ExecutionResult> {
+    override fun beginExecution(
+        parameters: InstrumentationExecutionParameters?
+    ): InstrumentationContext<ExecutionResult> {
         val start = Instant.now(clock)
         val executionId = parameters?.executionInput?.executionId
         log.info(
